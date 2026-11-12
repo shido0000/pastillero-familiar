@@ -18,8 +18,8 @@ jobs:
           java-version: '17'
 
       - uses: subosito/flutter-action@v2
-          with:
-            channel: stable
+        with:
+          channel: stable
 
       # Genera las carpetas nativas android/ e ios/ (no se versionan).
       - name: Generar carpetas nativas
