@@ -4,8 +4,8 @@
 // se perdió si estuvo apagado.
 import 'dart:convert';
 
-import '../../features/tomas/domain/motor_tomas.dart';
 import '../database/app_database.dart';
+import '../../features/tomas/domain/motor_tomas.dart';
 import 'notification_service.dart';
 
 class ProgramadorRecordatorios {
@@ -44,7 +44,7 @@ class ProgramadorRecordatorios {
           for (final slot in slots) {
             if (slot.fechaProgramada.isBefore(ahora)) continue;
             await _notificaciones.programarRecordatorio(
-              id: idNotificacion(med.id, slot.fechaProgramada),
+              id: _idNotificacion(med.id, slot.fechaProgramada),
               titulo: 'Hora de: ' + med.nombre,
               cuerpo: med.dosis + ' — ' + perfil.nombre,
               fecha: slot.fechaProgramada,
@@ -61,7 +61,7 @@ class ProgramadorRecordatorios {
 
   /// ID determinista y estable por (medicamento, minuto): permite
   /// reprogramar sin duplicar la misma toma.
-  int idNotificacion(int medicamentoId, DateTime fecha) =>
+  int _idNotificacion(int medicamentoId, DateTime fecha) =>
       (medicamentoId * 100000000 + fecha.millisecondsSinceEpoch ~/ 60000) %
       2147483647;
 }

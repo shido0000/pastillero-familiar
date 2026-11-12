@@ -26,10 +26,8 @@ class AppTheme {
               onSurface: Colors.black);
     } else {
       esquema = esOscuro
-          ? ColorScheme.fromSeed(
-              seedColor: const Color(0xFF2E7D32), brightness: Brightness.dark)
-          : ColorScheme.fromSeed(
-              seedColor: const Color(0xFF2E7D32), brightness: Brightness.light);
+          ? ColorScheme.fromSeed(seedColor: const Color(0xFF2E7D32), brightness: Brightness.dark)
+          : ColorScheme.fromSeed(seedColor: const Color(0xFF2E7D32), brightness: Brightness.light);
     }
 
     return ThemeData(

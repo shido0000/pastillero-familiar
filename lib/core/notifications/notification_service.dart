@@ -2,8 +2,8 @@
 // Acciones "Tomado"/"Omitir" desde la propia notificación.
 import 'dart:convert';
 
-import 'package:drift/drift.dart';
-import 'package:flutter/widgets.dart';
+import 'package:drift/drift.dart' show Value;
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
@@ -16,12 +16,12 @@ import '../database/app_database.dart';
 /// cuando el usuario toca una acción con la app cerrada.
 @pragma('vm:entry-point')
 Future<void> alResponderEnSegundoPlano(NotificationResponse respuesta) async {
-  await procesarAccion(respuesta);
+  await _procesarAccion(respuesta);
 }
 
 /// Procesa "Tomado"/"Omitir": escribe el estado directamente en SQLite.
 /// En segundo plano creamos nuestra propia conexión a la base de datos.
-Future<void> procesarAccion(NotificationResponse respuesta) async {
+Future<void> _procesarAccion(NotificationResponse respuesta) async {
   if (respuesta.payload == null) return;
   final accion = respuesta.actionId; // 'tomado' | 'omitir' | null (toque simple)
   if (accion == null) return; // toque simple: solo abre la app, no decide
@@ -62,7 +62,7 @@ class NotificationService {
     );
     await _plugin.initialize(
       const InitializationSettings(android: ajustesAndroid, iOS: ajustesIOS),
-      onDidReceiveNotificationResponse: procesarAccion,
+      onDidReceiveNotificationResponse: _alResponderEnPrimerPlano,
       onDidReceiveBackgroundNotificationResponse: alResponderEnSegundoPlano,
     );
 
@@ -127,9 +127,14 @@ class NotificationService {
   }
 
   Future<void> cancelarTodas() => _plugin.cancelAll();
+
+  void _alResponderEnPrimerPlano(NotificationResponse respuesta) {
+    // Con la app abierta también registramos la acción elegida.
+    _procesarAccion(respuesta);
+  }
 }
 
-// Provider global (se sobreescribe en main.dart con overrideWithValue).
+// Provider global del servicio (se sobreescribe en main.dart).
 final notificationServiceProvider = Provider<NotificationService>((ref) {
   throw UnimplementedError('Se inicializa en main() con overrideWithValue');
 });
