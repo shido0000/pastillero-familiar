@@ -20,29 +20,23 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
+          cache: true
 
-      # Genera las carpetas nativas android/ e ios/ (no se versionan).
-      - name: Generar carpetas nativas
-        run: flutter create . --platforms android,ios --org com.jonyperez --project-name pastillero_familiar
+      # Genera las carpetas nativas (no se guardan en el repo).
+      - name: Generar proyecto Android
+        run: flutter create . --platforms android --project-name pastillero_familiar --org com.jonyperez
 
-      # Permisos y receptores de notificaciones en el AndroidManifest.
-      - name: Configurar AndroidManifest
+      # Permisos y receptores de notificaciones en el manifest generado.
+      - name: Configurar permisos de notificaciones
         run: |
           MANIFEST=android/app/src/main/AndroidManifest.xml
-          sed -i 's|<application|<uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>\n            <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>\n            <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>\n            <uses-permission android:name="android.permission.VIBRATE"/>\n            <uses-permission android:name="android.permission.WAKE_LOCK"/>\n            <application|' "$MANIFEST"
-          sed -i 's|</application>|<receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />\n            <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver"><intent-filter><action android:name="android.intent.action.BOOT_COMPLETED"/><action android:name="android.intent.action.MY_PACKAGE_REPLACED"/></intent-filter></receiver>\n    </application>|' "$MANIFEST"
+          sed -i 's|<manifest|<uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>\n    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>\n    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>\n    <uses-permission android:name="android.permission.VIBRATE"/>\n    <uses-permission android:name="android.permission.WAKE_LOCK"/>\n    <manifest|' $MANIFEST
+          sed -i 's|android:icon="@mipmap/ic_launcher">|android:icon="@mipmap/ic_launcher">\n            <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />\n            <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">\n                <intent-filter>\n                    <action android:name="android.intent.action.BOOT_COMPLETED" />\n                    <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />\n                </intent-filter>\n            </receiver>|' $MANIFEST
 
-      - name: Dependencias
-        run: flutter pub get
-
-      - name: Generar código Drift
-        run: dart run build_runner build --delete-conflicting-outputs
-
-      - name: Tests
-        run: flutter test
-
-      - name: Compilar APK release
-        run: flutter build apk --release
+      - run: flutter pub get
+      - run: dart run build_runner build --delete-conflicting-outputs
+      - run: flutter test
+      - run: flutter build apk --release
 
       - uses: actions/upload-artifact@v4
         with:

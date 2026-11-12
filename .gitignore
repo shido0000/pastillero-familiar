@@ -1,32 +1,20 @@
-# Flutter/Dart
+# Flutter / Dart
 .dart_tool/
 .packages
 build/
 .flutter-plugins
 .flutter-plugins-dependencies
+.pub-cache/
+.pub/
 
 # IDE
 .idea/
 *.iml
 .vscode/
 
-# Android
-android/.gradle/
-android/local.properties
-android/key.properties
-*.keystore
-*.jks
+# Código generado (se regenera con build_runner)
+lib/core/database/app_database.g.dart
 
-# iOS
-ios/Pods/
-ios/.symlinks/
-ios/Flutter/Flutter.framework
-ios/Flutter/Flutter.podspec
-
-# Código generado por Drift (se regenera con build_runner)
-*.g.dart
-
-# Firebase (no subir credenciales)
-google-services.json
-GoogleService-Info.plist
-firebase_options.dart
+# Plataformas nativas (las genera "flutter create" en CI y localmente)
+android/
+ios/
