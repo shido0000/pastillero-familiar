@@ -1,5 +1,6 @@
 // Ajustes de accesibilidad, tema y estado de la app (SharedPreferences).
 // Pensados para adultos mayores: texto grande y alto contraste de fábrica.
+import 'package:flutter/foundation.dart'; // ValueGetter
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

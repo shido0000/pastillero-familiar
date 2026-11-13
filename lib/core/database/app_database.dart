@@ -34,7 +34,8 @@ class Medicamentos extends Table {
   TextColumn get nombre => text().withLength(min: 1, max: 80)();
   // Texto libre: "500 mg", "1 comprimido", "2 inhalaciones"...
   TextColumn get dosis => text().withLength(min: 1, max: 60)();
-  IntColumn get tipoFrecuencia => intEnum<TipoFrecuencia>();
+  // Nota: intEnum devuelve un ColumnBuilder que debe invocarse ()().
+  IntColumn get tipoFrecuencia => intEnum<TipoFrecuencia>()();
   // Cada X horas (ej. cada 8 h). Solo si tipoFrecuencia == cadaXHoras.
   IntColumn get intervaloHoras => integer().nullable()();
   // X veces al día (ej. 3 veces). Solo si tipoFrecuencia == vecesAlDia.
@@ -63,7 +64,7 @@ class Tomas extends Table {
   IntColumn get id => integer().autoIncrement()();
   IntColumn get medicamentoId => integer().references(Medicamentos, #id)();
   DateTimeColumn get fechaProgramada => dateTime()();
-  IntColumn get estado => intEnum<EstadoToma>();
+  IntColumn get estado => intEnum<EstadoToma>()();
   // Momento real en que el usuario respondió (para el reporte PDF).
   DateTimeColumn get respondidaEn => dateTime().nullable()();
 

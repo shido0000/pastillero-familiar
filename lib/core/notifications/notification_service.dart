@@ -113,6 +113,8 @@ class NotificationService {
       // Alarma exacta (ideal para medicación).
       await _plugin.zonedSchedule(
         id, titulo, cuerpo, fechaTz, detalles,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         payload: payload,
       );
@@ -120,6 +122,8 @@ class NotificationService {
       // Sin permiso de alarma exacta: caída a modo inexacto (la app sigue útil).
       await _plugin.zonedSchedule(
         id, titulo, cuerpo, fechaTz, detalles,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
         androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
         payload: payload,
       );

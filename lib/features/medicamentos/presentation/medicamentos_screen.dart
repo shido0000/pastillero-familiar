@@ -26,34 +26,39 @@ class MedicamentosScreen extends ConsumerWidget {
       body: medsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Error: ' + e.toString())),
-        empty: () => const Center(
-          child: Padding(
-            padding: EdgeInsets.all(32),
-            child: Text(
-              'Aún no hay medicamentos.\nToca "Agregar" para crear el primero.',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 18),
-            ),
-          ),
-        ),
-        data: (meds) => ListView.builder(
-          padding: const EdgeInsets.all(16),
-          itemCount: meds.length,
-          itemBuilder: (context, i) {
-            final med = meds[i];
-            return Card(
-              child: ListTile(
-                leading: Icon(Icons.medication_rounded,
-                    size: 40, color: Theme.of(context).colorScheme.primary),
-                title: Text(med.nombre,
-                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
-                subtitle: Text(med.dosis),
-                trailing: const Icon(Icons.chevron_right_rounded),
-                onTap: () => context.go('/medicamento/${med.id}'),
+        data: (meds) {
+          // Estado vacío: aún no hay medicamentos.
+          if (meds.isEmpty) {
+            return const Center(
+              child: Padding(
+                padding: EdgeInsets.all(32),
+                child: Text(
+                  'Aún no hay medicamentos.\nToca "Agregar" para crear el primero.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18),
+                ),
               ),
             );
-          },
-        ),
+          }
+          return ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: meds.length,
+            itemBuilder: (context, i) {
+              final med = meds[i];
+              return Card(
+                child: ListTile(
+                  leading: Icon(Icons.medication_rounded,
+                      size: 40, color: Theme.of(context).colorScheme.primary),
+                  title: Text(med.nombre,
+                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
+                  subtitle: Text(med.dosis),
+                  trailing: const Icon(Icons.chevron_right_rounded),
+                  onTap: () => context.go('/medicamento/${med.id}'),
+                ),
+              );
+            },
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton.extended(
         icon: const Icon(Icons.add_rounded),

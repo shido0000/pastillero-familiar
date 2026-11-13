@@ -30,51 +30,56 @@ class PerfilesScreen extends ConsumerWidget {
       body: perfilesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Error al cargar: ' + e.toString())),
-        empty: () => const Center(
-          child: Padding(
-            padding: EdgeInsets.all(32),
-            child: Text(
-              'Crea el primer perfil para empezar.\nPor ejemplo: "Papá" o "Abuela".',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 18),
-            ),
-          ),
-        ),
-        data: (perfiles) => ListView.builder(
-          padding: const EdgeInsets.all(16),
-          itemCount: perfiles.length,
-          itemBuilder: (context, i) {
-            final perfil = perfiles[i];
-            final activo = perfil.id == ajustes.perfilActivoId;
-            return Card(
-              elevation: activo ? 4 : 1,
-              child: ListTile(
-                leading: perfil.fotoPath != null
-                    ? CircleAvatar(
-                        backgroundImage: FileImage(File(perfil.fotoPath!)),
-                        radius: 28,
-                      )
-                    : CircleAvatar(
-                        radius: 28,
-                        child: Text(perfil.nombre.isEmpty
-                            ? '?'
-                            : perfil.nombre[0].toUpperCase()),
-                      ),
-                title: Text(perfil.nombre,
-                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
-                subtitle: perfil.edad != null ? Text('${perfil.edad} años') : null,
-                trailing: activo
-                    ? Icon(Icons.check_circle_rounded,
-                        color: Theme.of(context).colorScheme.primary)
-                    : null,
-                onTap: () async {
-                  await ref.read(ajustesProvider.notifier).setPerfilActivo(perfil.id);
-                  if (context.mounted) context.go('/medicamentos');
-                },
+        data: (perfiles) {
+          // Estado vacío: aún no hay perfiles creados.
+          if (perfiles.isEmpty) {
+            return const Center(
+              child: Padding(
+                padding: EdgeInsets.all(32),
+                child: Text(
+                  'Crea el primer perfil para empezar.\nPor ejemplo: "Papá" o "Abuela".',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18),
+                ),
               ),
             );
-          },
-        ),
+          }
+          return ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: perfiles.length,
+            itemBuilder: (context, i) {
+              final perfil = perfiles[i];
+              final activo = perfil.id == ajustes.perfilActivoId;
+              return Card(
+                elevation: activo ? 4 : 1,
+                child: ListTile(
+                  leading: perfil.fotoPath != null
+                      ? CircleAvatar(
+                          backgroundImage: FileImage(File(perfil.fotoPath!)),
+                          radius: 28,
+                        )
+                      : CircleAvatar(
+                          radius: 28,
+                          child: Text(perfil.nombre.isEmpty
+                              ? '?'
+                              : perfil.nombre[0].toUpperCase()),
+                        ),
+                  title: Text(perfil.nombre,
+                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
+                  subtitle: perfil.edad != null ? Text('${perfil.edad} años') : null,
+                  trailing: activo
+                      ? Icon(Icons.check_circle_rounded,
+                          color: Theme.of(context).colorScheme.primary)
+                      : null,
+                  onTap: () async {
+                    await ref.read(ajustesProvider.notifier).setPerfilActivo(perfil.id);
+                    if (context.mounted) context.go('/medicamentos');
+                  },
+                ),
+              );
+            },
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton.extended(
         icon: const Icon(Icons.person_add_rounded),

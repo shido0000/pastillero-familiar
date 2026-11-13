@@ -4,6 +4,8 @@
 // se perdió si estuvo apagado.
 import 'dart:convert';
 
+import 'package:drift/drift.dart'; // operador & en expresiones booleanas
+
 import '../database/app_database.dart';
 import '../../features/tomas/domain/motor_tomas.dart';
 import 'notification_service.dart';
